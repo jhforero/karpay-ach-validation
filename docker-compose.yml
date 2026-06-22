@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: karpay-postgres
+    environment:
+      POSTGRES_DB: karpay
+      POSTGRES_USER: karpay
+      POSTGRES_PASSWORD: karpay123
+    ports:
+      - "5440:5432"
+    volumes:
+      - karpay_pgdata:/var/lib/postgresql/data
+
+volumes:
+  karpay_pgdata:
