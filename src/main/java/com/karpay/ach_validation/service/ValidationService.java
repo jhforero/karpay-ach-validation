@@ -43,6 +43,7 @@ public class ValidationService {
             return existente.get();
         }
 
+        //Esta parte si el cliente no existe lo crea, esto se hace con la linea de orelseget con save
         Customer customer = customerRepo
                 .findByDocumentTypeAndDocumentNumber("CC", req.customerDocument())
                 .orElseGet(() -> customerRepo.save(
@@ -52,7 +53,7 @@ public class ValidationService {
                                 .name("Cliente " + req.customerDocument())
                                 .build()));
 
-
+        //Esat parte si la cuenta bancaria no existe la crea con la linea orelseget con el save 
         BankAccount account = accountRepo
                 .findByCustomerIdAndBankCodeAndAccountNumber(
                         customer.getId(), req.bankCode(), req.accountNumber())
@@ -65,6 +66,7 @@ public class ValidationService {
                                 .status("PENDING")
                                 .build()));
 
+        //Crea el objeto de validation
         Validation validation = Validation.builder()
                 .account(account)
                 .requestId(requestId)
@@ -88,9 +90,10 @@ public class ValidationService {
     }
 
     private String generateRequestId(CreateValidationRequest req, String idempotencyKey) {
+    	//Aca si llego la idempotencia la devuelve si no la crea con documento, codigo del banco y el numero de cuenta
         if (idempotencyKey != null && !idempotencyKey.isBlank()) {
             return idempotencyKey;
-        }
+        }	
 
         String raw = req.customerDocument() + "|" + req.bankCode() + "|" + req.accountNumber();
         try {
